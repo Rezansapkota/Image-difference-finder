@@ -4,7 +4,15 @@ import cv2
 
 from src.spot_difference.alterations import BlurAlteration
 from src.spot_difference.alterations import BrightnessAlteration
+from src.spot_difference.alterations import ContrastAlteration
 from src.spot_difference.alterations import ColourShiftAlteration
+from src.spot_difference.alterations import DesaturateAlteration
+from src.spot_difference.alterations import EdgeGlowAlteration
+from src.spot_difference.alterations import NoiseGrainAlteration
+from src.spot_difference.alterations import PixelateAlteration
+from src.spot_difference.alterations import SharpenAlteration
+from src.spot_difference.alterations import ShiftPatchAlteration
+from src.spot_difference.alterations import TintOverlayAlteration
 from src.spot_difference.models import DifferenceRegion
 
 
@@ -16,6 +24,14 @@ class ImageProcessor:
             ColourShiftAlteration(),
             BlurAlteration(),
             BrightnessAlteration(),
+            ContrastAlteration(),
+            TintOverlayAlteration(),
+            ShiftPatchAlteration(),
+            SharpenAlteration(),
+            PixelateAlteration(),
+            NoiseGrainAlteration(),
+            EdgeGlowAlteration(),
+            DesaturateAlteration(),
         ]
 
     def load_image(self, image_path):
@@ -30,6 +46,7 @@ class ImageProcessor:
         return image
 
     def create_modified_image(self, original_image):
+        # Apply one random alteration to each hidden difference region.
         modified_image = original_image.copy()
         difference_regions = self._create_difference_regions(original_image)
 
@@ -47,10 +64,11 @@ class ImageProcessor:
         return original_image, modified_image, difference_regions
 
     def _create_difference_regions(self, image):
+        # Pick non-overlapping areas where changes will be hidden.
         image_height, image_width = image.shape[:2]
         minimum_side = min(image_width, image_height)
-        minimum_size = max(28, int(minimum_side * 0.07))
-        maximum_size = max(minimum_size + 8, int(minimum_side * 0.14))
+        minimum_size = max(36, int(minimum_side * 0.09))
+        maximum_size = max(minimum_size + 10, int(minimum_side * 0.18))
 
         regions = []
         attempts = 0

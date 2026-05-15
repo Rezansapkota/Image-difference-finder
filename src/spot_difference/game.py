@@ -24,6 +24,7 @@ class SpotDifferenceGame:
         return MAX_DIFFERENCES - self.remaining
 
     def load_image(self, image_path):
+        # Create the original and modified images for a fresh round.
         original_image, modified_image, difference_regions = self.image_processor.load_and_process(image_path)
 
         self.original_image = original_image
@@ -33,6 +34,7 @@ class SpotDifferenceGame:
         self.round_locked = False
 
     def check_click(self, x, y):
+        # Mark a difference as found when the click lands inside its region.
         if self.round_locked:
             return None
 
